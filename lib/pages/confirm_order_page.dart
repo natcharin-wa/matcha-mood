@@ -1,11 +1,12 @@
-import 'package:provider/provider.dart';
-import '../controllers/cart_controller.dart';
-import 'receipt_page.dart';
-import '../services/firestore_service.dart';
 import 'package:flutter/material.dart';
-import '../models/cart_item.dart';
+import 'package:provider/provider.dart';
 
-// หน้ายืนยันรายการสั่งซื้อ
+import '../models/cart_item.dart';
+import '../controllers/cart_controller.dart';
+import '../services/firestore_service.dart';
+import 'receipt_page.dart';
+
+// ยืนยันรายการสั่งซื้อ
 class ConfirmOrderPage extends StatelessWidget {
   // ข้อมูลลูกค้าและรายการที่สั่ง
   final String name;
@@ -29,6 +30,7 @@ class ConfirmOrderPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('ยืนยันการสั่งซื้อ')),
+
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: ListView(
@@ -37,10 +39,13 @@ class ConfirmOrderPage extends StatelessWidget {
             Text('ชื่อ: $name'),
             Text('เบอร์โทร: $phone'),
             Text('ประเภทการสั่ง: $orderType'),
+
+            // แสดงโต๊ะเฉพาะตอนทานที่ร้าน
             if (tableNumber != null) Text('โต๊ะ: $tableNumber'),
 
             const SizedBox(height: 20),
 
+            // หัวข้อรายการสินค้า
             const Text(
               'รายการสินค้า',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -48,14 +53,20 @@ class ConfirmOrderPage extends StatelessWidget {
 
             const SizedBox(height: 10),
 
-            // รายการเครื่องดื่ม
+            // แสดงรายการเครื่องดื่มที่อยู่ในตะกร้า
             ...items.map((item) {
               return ListTile(
+                // ชื่อเครื่องดื่ม
                 title: Text(item.product.name),
+
+                // รายละเอียดที่ลูกค้าเลือก
                 subtitle: Text(
                   'หวาน ${item.sweetness}% • ${item.drinkType}\n'
-                  'ท็อปปิ้ง: ${item.toppings.isEmpty ? 'ไม่มี' : item.toppings.join(', ')}',
+                  'ท็อปปิ้ง: ${item.toppings.isEmpty ? 'ไม่มี' : item.toppings.join(', ')}\n'
+                  'เพิ่มเติม: ${item.extras.isEmpty ? 'ไม่มี' : item.extras.join(', ')}',
                 ),
+
+                // คำนวณราคาของรายการนี้
                 trailing: Text(
                   '${(item.product.price + item.toppingPrice + item.extraPrice) * item.quantity} บาท',
                 ),
@@ -64,7 +75,7 @@ class ConfirmOrderPage extends StatelessWidget {
 
             const Divider(),
 
-            // ราคารวม
+            // แสดงราคารวมทั้งหมด
             Text(
               'รวม $totalPrice บาท',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -75,17 +86,18 @@ class ConfirmOrderPage extends StatelessWidget {
             // ยืนยันออเดอร์
             ElevatedButton(
               onPressed: () async {
-                // บันทึกออเดอร์ลง Firebase
+                // บันทึกข้อมูลออเดอร์ลง Firebase
                 await FirestoreService().addOrder({
-                  'testVersion': 'new_code',
                   'name': name,
                   'phone': phone,
                   'orderType': orderType,
                   'tableNumber': tableNumber,
                   'totalPrice': totalPrice,
+
+                  // สถานะเริ่มต้นของออเดอร์
                   'status': 'กำลังรับออเดอร์',
 
-                  // รายละเอียดสินค้า
+                  // บันทึกรายละเอียดสินค้าทั้งหมด
                   'items': items.map((item) {
                     return {
                       'product': item.product.name,
@@ -94,15 +106,17 @@ class ConfirmOrderPage extends StatelessWidget {
                       'drinkType': item.drinkType,
                       'iceLevel': item.iceLevel,
                       'toppings': item.toppings,
+                      'extras': item.extras,
                       'toppingPrice': item.toppingPrice,
                       'extraPrice': item.extraPrice,
                     };
                   }).toList(),
                 });
 
+                // ตรวจสอบว่ายังอยู่ในหน้านี้ก่อนใช้ context
                 if (!context.mounted) return;
 
-                // ล้างตะกร้า
+                // สั่งซื้อเสร็จแล้วจึงล้างตะกร้า
                 context.read<CartController>().clearCart();
 
                 // ไปหน้าใบเสร็จ

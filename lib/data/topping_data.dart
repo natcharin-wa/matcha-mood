@@ -1,6 +1,6 @@
 import '../models/topping.dart';
 
-// รายการท็อปปิ้งและราคา
+// รายการท็อปปิ้งและราคาที่ใช้ในแอป
 List<Topping> toppings = [
   Topping("Whipped Cream", 15),
   Topping("Pearl", 10),

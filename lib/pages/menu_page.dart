@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+
 import '../data/menu_data.dart';
+import 'profile_page.dart';
 import 'cart_page.dart';
 import 'customize_page.dart';
 import 'order_history_page.dart';
 import 'api_page.dart';
 
-// หน้าแสดงเมนู
+// แสดงเมนูหลัก
 class MenuPage extends StatelessWidget {
   const MenuPage({super.key});
 
@@ -14,7 +16,21 @@ class MenuPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Matcha Menu'),
+
+        // ปุ่มต่างๆ ด้านบนของหน้า
         actions: [
+          // ไปหน้าโปรไฟล์สมาชิก
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const ProfilePage()),
+              );
+            },
+          ),
+
+          // ไปหน้าข้อมูลจาก API
           IconButton(
             icon: const Icon(Icons.api),
             onPressed: () {
@@ -24,6 +40,8 @@ class MenuPage extends StatelessWidget {
               );
             },
           ),
+
+          // ไปหน้าประวัติการสั่งซื้อ
           IconButton(
             icon: const Icon(Icons.history),
             onPressed: () {
@@ -33,6 +51,8 @@ class MenuPage extends StatelessWidget {
               );
             },
           ),
+
+          // ไปหน้าตะกร้าสินค้า
           IconButton(
             icon: const Icon(Icons.shopping_cart),
             onPressed: () {
@@ -45,16 +65,21 @@ class MenuPage extends StatelessWidget {
         ],
       ),
 
-      // แสดงรายการเมนูทั้งหมด
+      // แสดงรายการเมนูจาก menu_data.dart
       body: ListView.builder(
         itemCount: menu.length,
         itemBuilder: (context, index) {
+          // ดึงเมนูตามลำดับที่กำลังแสดง
           final product = menu[index];
 
           return ListTile(
+            // ชื่อเมนู
             title: Text(product.name),
+
+            // ราคาเมนู
             subtitle: Text('${product.price} บาท'),
-            // ไปหน้าปรับแต่งเมนู
+
+            // ปุ่มเพิ่มเพื่อไปหน้าปรับแต่งเครื่องดื่ม
             trailing: ElevatedButton(
               onPressed: () {
                 Navigator.push(

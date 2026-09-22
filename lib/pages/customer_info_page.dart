@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'confirm_order_page.dart';
 import 'package:provider/provider.dart';
+
+import 'confirm_order_page.dart';
 import '../controllers/cart_controller.dart';
 
-// หน้ากรอกข้อมูลลูกค้า
+// กรอกข้อมูลลูกค้าก่อนยืนยันออเดอร์
 class CustomerInfoPage extends StatefulWidget {
   const CustomerInfoPage({super.key});
 
@@ -12,19 +13,24 @@ class CustomerInfoPage extends StatefulWidget {
 }
 
 class _CustomerInfoPageState extends State<CustomerInfoPage> {
-  // ตรวจสอบข้อมูลในฟอร์ม
+  // ตรวจสอบข้อมูลที่กรอกใน Form
   final formKey = GlobalKey<FormState>();
 
   // เก็บข้อมูลลูกค้า
   String name = '';
   String phone = '';
+
+  // ประเภทการสั่งซื้อ เริ่มต้นเป็นกลับบ้าน
   String orderType = 'กลับบ้าน';
+
+  // เก็บหมายเลขโต๊ะ ถ้าเลือกทานที่ร้าน
   int? tableNumber;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('ข้อมูลลูกค้า')),
+
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Form(
@@ -32,15 +38,19 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ช่องกรอกชื่อ
+              // ชื่อลูกค้า
               TextFormField(
                 decoration: const InputDecoration(labelText: 'ชื่อ'),
+
+                // ตรวจสอบว่ากรอกชื่อรึยัง
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'กรุณากรอกชื่อ';
                   }
                   return null;
                 },
+
+                // เก็บชื่อที่กรอกไว้
                 onSaved: (value) {
                   name = value!;
                 },
@@ -48,16 +58,20 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
 
               const SizedBox(height: 20),
 
-              // ช่องกรอกเบอร์โทร
+              // เบอร์โทรศัพท์
               TextFormField(
                 decoration: const InputDecoration(labelText: 'เบอร์โทรศัพท์'),
                 keyboardType: TextInputType.phone,
+
+                // ตรวจสอบว่ากรอกเบอร์โทรรึยัง
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'กรุณากรอกเบอร์โทรศัพท์';
                   }
                   return null;
                 },
+
+                // เก็บเบอร์โทรที่กรอกไว้
                 onSaved: (value) {
                   phone = value!;
                 },
@@ -69,17 +83,20 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
 
               const SizedBox(height: 8),
 
-              // เลือกทานที่ร้านหรือกลับบ้าน
+              // ประเภทการสั่ง
               Wrap(
                 spacing: 8,
                 children: ['ทานที่ร้าน', 'กลับบ้าน'].map((type) {
                   return ChoiceChip(
                     label: Text(type),
                     selected: orderType == type,
+
+                    // เปลี่ยนประเภทการสั่ง
                     onSelected: (_) {
                       setState(() {
                         orderType = type;
 
+                        // ถ้าเลือกกลับบ้าน จะไม่ต้องใช้หมายเลขโต๊ะ
                         if (type == 'กลับบ้าน') {
                           tableNumber = null;
                         }
@@ -89,7 +106,8 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
                 }).toList(),
               ),
 
-              // ถ้าทานที่ร้าน ให้เลือกโต๊ะ
+              // เลือกโต๊ะ
+              // แสดงเฉพาะตอนเลือกทานที่ร้าน
               if (orderType == 'ทานที่ร้าน') ...[
                 const SizedBox(height: 20),
 
@@ -97,6 +115,7 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
 
                 const SizedBox(height: 8),
 
+                // สร้างปุ่มเลือกโต๊ะ 1-8
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -106,6 +125,8 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
                     return ChoiceChip(
                       label: Text('โต๊ะ $table'),
                       selected: tableNumber == table,
+
+                      // เก็บหมายเลขโต๊ะที่เลือก
                       onSelected: (_) {
                         setState(() {
                           tableNumber = table;
@@ -118,17 +139,17 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
 
               const SizedBox(height: 30),
 
-              // ปุ่มไปหน้ายืนยันออเดอร์
+              // ไปหน้ายืนยัน
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // ตรวจสอบข้อมูลก่อนส่งต่อ
+                    // ตรวจสอบข้อมูลใน Form ก่อน
                     if (!formKey.currentState!.validate()) {
                       return;
                     }
 
-                    // ถ้าทานที่ร้านต้องเลือกโต๊ะ
+                    // ถ้าทานที่ร้านต้องเลือกโต๊ะก่อน
                     if (orderType == 'ทานที่ร้าน' && tableNumber == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('กรุณาเลือกโต๊ะ')),
@@ -136,12 +157,13 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
                       return;
                     }
 
+                    // บันทึกค่าจาก TextFormField
                     formKey.currentState!.save();
 
-                    // ดึงข้อมูลตะกร้า
+                    // ดึงข้อมูลสินค้าจาก CartController
                     final cart = context.read<CartController>();
 
-                    // ส่งข้อมูลไปหน้า Confirm Order
+                    // ส่งข้อมูลลูกค้าและข้อมูลตะกร้าไปหน้ายืนยัน
                     Navigator.push(
                       context,
                       MaterialPageRoute(

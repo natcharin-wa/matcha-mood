@@ -1,6 +1,6 @@
 import '../models/product.dart';
 
-// รายการเมนูเครื่องดื่ม
+// รายการเมนูเครื่องดื่มและราคา
 List<Product> menu = [
   Product("Original Matcha", 65),
   Product("Matcha Latte", 75),

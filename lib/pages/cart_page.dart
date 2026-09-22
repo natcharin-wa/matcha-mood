@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../controllers/cart_controller.dart';
 import 'customer_info_page.dart';
 
@@ -10,10 +11,12 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ดึงข้อมูลตะกร้าจาก CartController
+    // watch ทำให้หน้านี้อัปเดตเมื่อข้อมูลตะกร้าเปลี่ยน
     final cart = context.watch<CartController>();
 
     return Scaffold(
       appBar: AppBar(title: const Text('Cart')),
+
       body: Column(
         children: [
           // แสดงรายการสินค้าในตะกร้า
@@ -21,14 +24,26 @@ class CartPage extends StatelessWidget {
             child: ListView.builder(
               itemCount: cart.items.length,
               itemBuilder: (context, index) {
+                // ดึงสินค้าแต่ละรายการจากตะกร้า
                 final item = cart.items[index];
 
                 return ListTile(
+                  // ชื่อเครื่องดื่ม
                   title: Text(item.product.name),
+
+                  // แสดงรายละเอียดของเครื่องดื่ม
                   subtitle: Text(
-                    '${item.product.price} บาท • หวาน ${item.sweetness}% • ${item.drinkType} • น้ำแข็ง${item.iceLevel}\n'
-                    'ท็อปปิ้ง: ${item.toppings.isEmpty ? 'ไม่มี' : item.toppings.join(', ')}',
+                    '${item.product.price} บาท • '
+                    'หวาน ${item.sweetness}% • '
+                    '${item.drinkType} • '
+                    'น้ำแข็ง${item.iceLevel}\n'
+                    'ท็อปปิ้ง: '
+                    '${item.toppings.isEmpty ? 'ไม่มี' : item.toppings.join(', ')}\n'
+                    'เพิ่มเติม: '
+                    '${item.extras.isEmpty ? 'ไม่มี' : item.extras.join(', ')}',
                   ),
+
+                  // ปุ่มจัดการจำนวนสินค้า
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -40,12 +55,13 @@ class CartPage extends StatelessWidget {
                         icon: const Icon(Icons.remove),
                       ),
 
+                      // แสดงจำนวนสินค้า
                       Text('${item.quantity}'),
 
                       // เพิ่มจำนวนสินค้า
                       IconButton(
                         onPressed: () {
-                          cart.addItem(item);
+                          cart.increaseItem(item);
                         },
                         icon: const Icon(Icons.add),
                       ),
@@ -64,7 +80,7 @@ class CartPage extends StatelessWidget {
             ),
           ),
 
-          // แสดงราคารวม
+          // แสดงราคารวมทั้งหมด
           Text(
             'รวม ${cart.totalPrice} บาท',
             style: const TextStyle(fontSize: 20),
