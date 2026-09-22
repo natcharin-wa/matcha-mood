@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "413260978943",
+    "project_id": "flutterfirebaseeducated-adffa",
+    "storage_bucket": "flutterfirebaseeducated-adffa.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413260978943:android:05f6bbb25e1bd76b488aca",
+        "android_client_info": {
+          "package_name": "com.example.lib"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwclcJkE1uQjZsRrNPWuJHFc8iDYyoxMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:413260978943:android:b414653862cb6fbd488aca",
+        "android_client_info": {
+          "package_name": "com.example.matcha_mood"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwclcJkE1uQjZsRrNPWuJHFc8iDYyoxMM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
