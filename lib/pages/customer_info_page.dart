@@ -28,19 +28,49 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('ข้อมูลลูกค้า')),
+    // โทนสีของหน้า
+    const matchaGreen = Color(0xFF557C2B);
+    const accentPink = Color(0xFFEFB7F7);
+    const bgCream = Color(0xFFFAF5EF);
+    const darkText = Color(0xFF2C3E1F);
 
-      body: Padding(
+    return Scaffold(
+      backgroundColor: bgCream,
+
+      appBar: AppBar(
+        backgroundColor: matchaGreen,
+        foregroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'ข้อมูลลูกค้า',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
           key: formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ชื่อลูกค้า
+              // ช่องกรอกชื่อลูกค้า
               TextFormField(
-                decoration: const InputDecoration(labelText: 'ชื่อ'),
+                decoration: InputDecoration(
+                  labelText: 'ชื่อ',
+                  labelStyle: const TextStyle(color: darkText),
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: const Icon(Icons.person, color: matchaGreen),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: matchaGreen, width: 2),
+                  ),
+                ),
 
                 // ตรวจสอบว่ากรอกชื่อรึยัง
                 validator: (value) {
@@ -58,9 +88,23 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
 
               const SizedBox(height: 20),
 
-              // เบอร์โทรศัพท์
+              // ช่องกรอกเบอร์โทรศัพท์
               TextFormField(
-                decoration: const InputDecoration(labelText: 'เบอร์โทรศัพท์'),
+                decoration: InputDecoration(
+                  labelText: 'เบอร์โทรศัพท์',
+                  labelStyle: const TextStyle(color: darkText),
+                  filled: true,
+                  fillColor: Colors.white,
+                  prefixIcon: const Icon(Icons.phone, color: matchaGreen),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: matchaGreen, width: 2),
+                  ),
+                ),
                 keyboardType: TextInputType.phone,
 
                 // ตรวจสอบว่ากรอกเบอร์โทรรึยัง
@@ -79,17 +123,40 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
 
               const SizedBox(height: 25),
 
-              const Text('ประเภทการสั่ง', style: TextStyle(fontSize: 18)),
+              // หัวข้อประเภทการสั่ง
+              const Text(
+                'ประเภทการสั่ง',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: darkText,
+                ),
+              ),
 
               const SizedBox(height: 8),
 
-              // ประเภทการสั่ง
+              // เลือกประเภทการสั่ง
               Wrap(
                 spacing: 8,
                 children: ['ทานที่ร้าน', 'กลับบ้าน'].map((type) {
+                  final isSelected = orderType == type;
+
                   return ChoiceChip(
-                    label: Text(type),
-                    selected: orderType == type,
+                    label: Text(
+                      type,
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : darkText,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                    selected: isSelected,
+                    selectedColor: matchaGreen,
+                    backgroundColor: Colors.white,
+                    side: BorderSide(
+                      color: isSelected ? matchaGreen : Colors.grey.shade300,
+                    ),
 
                     // เปลี่ยนประเภทการสั่ง
                     onSelected: (_) {
@@ -111,7 +178,14 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
               if (orderType == 'ทานที่ร้าน') ...[
                 const SizedBox(height: 20),
 
-                const Text('เลือกโต๊ะ', style: TextStyle(fontSize: 18)),
+                const Text(
+                  'เลือกโต๊ะ',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: darkText,
+                  ),
+                ),
 
                 const SizedBox(height: 8),
 
@@ -121,10 +195,24 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
                   runSpacing: 8,
                   children: List.generate(8, (index) {
                     int table = index + 1;
+                    final isSelected = tableNumber == table;
 
                     return ChoiceChip(
-                      label: Text('โต๊ะ $table'),
-                      selected: tableNumber == table,
+                      label: Text(
+                        'โต๊ะ $table',
+                        style: TextStyle(
+                          color: darkText,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
+                      ),
+                      selected: isSelected,
+                      selectedColor: accentPink,
+                      backgroundColor: Colors.white,
+                      side: BorderSide(
+                        color: isSelected ? accentPink : Colors.grey.shade300,
+                      ),
 
                       // เก็บหมายเลขโต๊ะที่เลือก
                       onSelected: (_) {
@@ -143,6 +231,15 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: matchaGreen,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                   onPressed: () {
                     // ตรวจสอบข้อมูลใน Form ก่อน
                     if (!formKey.currentState!.validate()) {
@@ -178,7 +275,10 @@ class _CustomerInfoPageState extends State<CustomerInfoPage> {
                       ),
                     );
                   },
-                  child: const Text('ดำเนินการต่อ'),
+                  child: const Text(
+                    'ดำเนินการต่อ',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ),
             ],
